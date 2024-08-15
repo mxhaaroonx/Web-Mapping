@@ -32,14 +32,18 @@ lon=list(data["Longitude"])
 stat=list(data["Station"])
 line=list(data["Line"])
 
-fg=folium.FeatureGroup(name="My map")#creating a feature group to make it more organised
+fgm=folium.FeatureGroup(name="Metro stations")#creating a feature group to make it more organised
 
 #for loop to iterate through the data and add markers
 for lt,lo,st,lin in zip(lat,lon,stat,line):
-    fg.add_child(folium.Marker(location=[lt,lo], popup=str(st),icon=folium.Icon(color=color_produce(lin)))) #marker allows you to add popups. 
+    fgm.add_child(folium.Marker(location=[lt,lo], popup=str(st),icon=folium.Icon(color=color_produce(lin)))) #marker allows you to add popups. 
 
-fg.add_child(folium.GeoJson(data=open('world.json', 'r', encoding='utf-8-sig').read() , 
+fgp=folium.FeatureGroup(name="population")
+fgp.add_child(folium.GeoJson(data=open('world.json', 'r', encoding='utf-8-sig').read() , 
 style_function=lambda x: {'fillColor' : 'green' if x['properties']['POP2005'] <100000000
-else 'orange' if 10000000<x['properties']['POP2005']<200000000 else 'red'}) )
-map.add_child(fg)  #calling the feature group
+else 'orange' if 10000000<x['properties']['POP2005']<200000000 else 'red'}) ) #utf-8-sig makes sure the file is read correctly, even if it has a special marker at the start. 
+
+map.add_child(fgm)
+map.add_child(fgp)#calling the feature group
+map.add_child(folium.LayerControl())
 map.save("MAP1.html") #saves 'map' in a html format
